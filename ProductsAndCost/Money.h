@@ -11,7 +11,7 @@ private:
 
     float count_;
     char currency_[6];
-    //static Money error_;
+    static Money error_;
 
 public:
 

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <list>
+#include <map>
 
 using namespace std;
 
@@ -14,14 +15,16 @@ private:
 
     fstream _database;
     string _databasePath;
-    list<Product> _products;
+    //list<Product> _products;
+    map<int, Product> _products;
 
+    
     void ClearRdbufIfNeed();
+    int GenerateProductCode();
     
 public:
     
     ProductStore(string);
-
     void PrintAllProducts();
     Product* CreateProduct();
     void EditProduct();

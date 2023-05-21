@@ -5,25 +5,35 @@ void ProductStore::ClearRdbufIfNeed()
     if (cin.rdbuf()->in_avail() != 0) {
 
         cin.clear();
+        cin.ignore(10, '\n');
     }
 }
 
 ProductStore::ProductStore(string databasePath)
 {
     _databasePath = databasePath;
-    _products = list<Product>();
+    //_products = list<Product>();
+    _products = map<int, Product>();
     
     _database.open(_databasePath, fstream::in | fstream::binary);
 
     if(_database.is_open())
     {
-        Product productBuffer;
+        /*Product productBuffer;
 
         while (_database.read((char*)&productBuffer, sizeof(Product))) {
 
             _products.push_back(productBuffer);
-        }
+        }*/
+        
 
+        pair<int, Product> codeProductPair;
+        
+        while (_database.read((char*)&codeProductPair, sizeof(pair<int, Product>))) {
+
+            _products.emplace(codeProductPair);
+        }
+        
         _database.close();
     }
     else
@@ -32,16 +42,42 @@ ProductStore::ProductStore(string databasePath)
     }
 }
 
+int ProductStore::GenerateProductCode()
+{
+    srand(time(nullptr));
+    int generatedCode = rand() % 900 + 100;
+
+    for (pair<int, Product> codeProductPair : _products)
+    {
+        if (codeProductPair.first == generatedCode)
+        {
+            generatedCode = GenerateProductCode();
+            break;
+        }
+    }
+
+    cout<<"CODE: " << generatedCode << endl;
+    
+    return generatedCode;
+}
+
 void ProductStore::PrintAllProducts()
 {
     int i = 0;
     cout << "Products: " << endl;
     
-    for (Product product : _products)
+    /*for (Product product : _products)
     {
         cout << i << ". " << product << endl;
         i++;
+    }*/
+
+    for (pair<int, Product> codeProductPair : _products)
+    {
+        cout << i << ". " << "Code: " << codeProductPair.first << " " << codeProductPair.second << endl;
+        i++;
     }
+    
     cout << "End." << endl;
     
 }
@@ -62,7 +98,7 @@ Product* ProductStore::CreateProduct()
         while (progress != -1 && progress < maxSteps)
         {
             ClearRdbufIfNeed();
-        
+            
             if (progress < 1)
             {
                 cout << "Enter name of the product: " << endl;
@@ -117,13 +153,20 @@ Product* ProductStore::CreateProduct()
                 progress++;
             }
         }
-
+        
+        ClearRdbufIfNeed();
+        
         if (progress >= maxSteps)
         {
             Product crated_product = Product(name_buffer.c_str(), Money(unit_cost_buffer, "USD"), count_buffer);
-            _database.write((char*)&crated_product, sizeof(Product));	
+            //_database.write((char*)&crated_product, sizeof(Product));	
 
-            _products.push_back(crated_product);
+            pair<int, Product> codeProductPair = pair<int, Product>(GenerateProductCode(), crated_product);
+
+            _database.write((char*)&codeProductPair, sizeof(pair<int, Product>));
+            
+            //_products.push_back(crated_product);
+            _products.emplace(codeProductPair);
             
             cout << "Product was successfully created." << endl;
             
@@ -141,5 +184,11 @@ Product* ProductStore::CreateProduct()
         _database.close();
         return nullptr;
     }
+    
+}
+
+void ProductStore::RemoveProduct()
+{
+
     
 }

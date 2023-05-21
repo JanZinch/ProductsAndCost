@@ -5,11 +5,10 @@ class Product
 {
 
 private:
-
-    int code_;
-    char _name[30];
+    
+    char _name[30] = "not_set";
     Money _cost;
-    int _count;
+    int _count = 0;
     
 public:
 
