@@ -18,8 +18,14 @@ private:
     //list<Product> _products;
     map<int, Product> _products;
 
+
+    class ConsoleUtility
+    {
+    public:
+        static void ClearRdbufIfNeed();
+    };
     
-    void ClearRdbufIfNeed();
+    
     int GenerateProductCode();
     
 public:
@@ -28,7 +34,7 @@ public:
     void PrintAllProducts();
     Product* CreateProduct();
     void EditProduct();
-    void RemoveProduct();
+    void TryRemoveProduct();
 
 
     

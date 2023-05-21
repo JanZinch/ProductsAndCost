@@ -1,6 +1,6 @@
 ﻿#include "ProductStore.h"
 
-void ProductStore::ClearRdbufIfNeed()
+void ProductStore::ConsoleUtility::ClearRdbufIfNeed()
 {
     if (cin.rdbuf()->in_avail() != 0) {
 
@@ -8,6 +8,7 @@ void ProductStore::ClearRdbufIfNeed()
         cin.ignore(10, '\n');
     }
 }
+
 
 ProductStore::ProductStore(string databasePath)
 {
@@ -97,7 +98,7 @@ Product* ProductStore::CreateProduct()
 
         while (progress != -1 && progress < maxSteps)
         {
-            ClearRdbufIfNeed();
+            ConsoleUtility::ClearRdbufIfNeed();
             
             if (progress < 1)
             {
@@ -154,7 +155,7 @@ Product* ProductStore::CreateProduct()
             }
         }
         
-        ClearRdbufIfNeed();
+        ConsoleUtility::ClearRdbufIfNeed();
         
         if (progress >= maxSteps)
         {
@@ -187,8 +188,52 @@ Product* ProductStore::CreateProduct()
     
 }
 
-void ProductStore::RemoveProduct()
+void ProductStore::TryRemoveProduct()
 {
+    try
+    {
+        cout << "Enter code of the product: " << endl;
+        int productCode;
+
+        ConsoleUtility::ClearRdbufIfNeed();
+        
+        if (cin >> productCode)
+        {
+            _products.erase(productCode);
+            
+            _database.open(_databasePath, fstream::out | fstream::trunc | fstream::binary);
+
+            if (_database.is_open())
+            {
+                for (pair<int, Product> codeProductPair : _products)
+                {
+                    _database.write((char*)&codeProductPair, sizeof(pair<int, Product>));
+                }
+                
+                _database.close();
+
+                cout << "Product successfully removed." << endl;
+            }
+            else
+            {
+                exit(EXIT_FAILURE);
+            }
+            
+        }
+        else
+        {
+            cout << "Incorrect input." << endl;
+        }
+
+        ConsoleUtility::ClearRdbufIfNeed();
+        
+    }
+    catch (exception &ex)
+    {
+        cout << "Product with this code don't exists." << endl;
+    }
+
+    
 
     
 }
