@@ -5,53 +5,54 @@
 
 int main(int argc, char* argv[])
 {
-    ProductStore productStore = ProductStore("DataBase.txt");
-    bool needToExit = false;
-    
-    while(!needToExit)
+    try
     {
-        cout << "1. View all products\n"
-            "2. Add product\n"
-            "3. Edit product\n"
-            "4. Remove product\n"
-            "0. Exit\n";
-        
-        switch (_getch())
+        ProductStore productStore = ProductStore("DataBase.txt");
+        bool needToExit = false;
+    
+        while(!needToExit)
         {
-
-        case '1':
-            productStore.PrintAllProducts();
-            break;
+            cout << "1. View all products\n"
+                "2. Add product\n"
+                "3. Edit product\n"
+                "4. Remove product\n"
+                "0. Exit\n";
         
-        case '2':
-            productStore.CreateProduct();
-            break;
-        case '3':
-            //productStore.CreateProduct();
-            break;
-        case '4':
-            productStore.TryRemoveProduct();
-            break;
+            switch (_getch())
+            {
 
-        case '0':
-            needToExit = true;
-            break;
+            case '1':
+                productStore.PrintAllProducts();
+                break;
         
-            /*default:
-                break;*/
+            case '2':
+                productStore.CreateProduct();
+                break;
+            case '3':
+                //productStore.CreateProduct();
+                break;
+            case '4':
+                productStore.TryRemoveProduct();
+                break;
+
+            case '0':
+                needToExit = true;
+                break;
+        
+                /*default:
+                    break;*/
+        
+            }
         
         }
 
-
         
     }
-
+    catch (exception &ex)
+    {
+        cout << ex.what() << endl;
+        return EXIT_FAILURE;
+    }
     
-    
-
-    
-
-
-    
-    return 0;
+    return EXIT_SUCCESS;
 }

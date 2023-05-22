@@ -15,16 +15,14 @@ private:
 
     fstream _database;
     string _databasePath;
-    //list<Product> _products;
     map<int, Product> _products;
-
-
+    
     class ConsoleUtility
     {
     public:
         static void ClearRdbufIfNeed();
+        static Product* ReadProduct();
     };
-    
     
     int GenerateProductCode();
     
@@ -32,7 +30,7 @@ public:
     
     ProductStore(string);
     void PrintAllProducts();
-    Product* CreateProduct();
+    void CreateProduct();
     void EditProduct();
     void TryRemoveProduct();
 
