@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
                 productStore.CreateProduct();
                 break;
             case '3':
-                //productStore.CreateProduct();
+                productStore.EditProduct();
                 break;
             case '4':
                 productStore.TryRemoveProduct();

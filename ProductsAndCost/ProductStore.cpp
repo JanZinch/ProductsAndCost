@@ -142,7 +142,6 @@ void ProductStore::PrintAllProducts() const
     }
     
     cout << "End." << endl;
-    
 }
 
 void ProductStore::CreateProduct()
@@ -179,6 +178,57 @@ void ProductStore::CreateProduct()
 
 void ProductStore::EditProduct()
 {
+    cout << "Enter code of the product: " << endl;
+    int productCode;
+
+    ConsoleUtility::ClearRdbufIfNeed();
+        
+    if (cin >> productCode)
+    {
+        const auto it = _products.find(productCode);
+
+        if (it != _products.end())
+        {
+            Product* editableProduct = ConsoleUtility::ReadProduct();
+
+            if (editableProduct != nullptr)
+            {
+                it->second = Product(*editableProduct);
+
+                _database.open(_databasePath, fstream::out | fstream::trunc | fstream::binary);
+                
+                if (_database.is_open())
+                {
+                    for (pair<int, Product> codeProductPair : _products)
+                    {
+                        _database.write((char*)&codeProductPair, sizeof(pair<int, Product>));
+                    }
+                
+                    _database.close();
+
+                    cout << "Product successfully updated." << endl;
+                }
+                else
+                {
+                    throw exception("Incorrect database path.");
+                }
+            }
+            else
+            {
+                cout << "Creation canceled." << endl;
+            }
+        }
+        else
+        {
+            cout << "Product with this code don't exists." << endl;
+        }
+    }
+    else
+    {
+        cout << "Incorrect input." << endl;
+    }
+
+    ConsoleUtility::ClearRdbufIfNeed();
 }
 
 void ProductStore::TryRemoveProduct()
