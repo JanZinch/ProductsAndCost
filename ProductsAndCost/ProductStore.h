@@ -24,12 +24,12 @@ private:
         static Product* ReadProduct();
     };
     
-    int GenerateProductCode();
+    int GenerateProductCode() const;
     
 public:
     
     ProductStore(string);
-    void PrintAllProducts();
+    void PrintAllProducts() const;
     void CreateProduct();
     void EditProduct();
     void TryRemoveProduct();

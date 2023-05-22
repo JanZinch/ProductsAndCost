@@ -39,38 +39,37 @@ Product* ProductStore::ConsoleUtility::ReadProduct()
         
         if (progress < 2)
         {
-            cout << "Enter product count: " << endl;
-            cin >> countBuffer;
-
-            if (!cin)
-            {
-                cout << "Incorrect input!" << endl;
-                break;
-            }
-            else if(countBuffer < 0)
-            {
-                cout << "Count can not be negative." << endl;
-                break;
-            }
-
-            progress++;
-            
-        }
-        
-        if (progress < 3)
-        {
             cout << "Enter the cost of unit: " << endl;
             cin >> unitCostBuffer;
 
             if (!cin)
             {
                 cout << "Incorrect input!" << endl;
-                break;
+                continue;
             }
-            else if(unitCostBuffer < 0.0f)
+            else if (unitCostBuffer < 0.0f)
             {
                 cout << "Cost can not be negative." << endl;
-                break;
+                continue;
+            }
+
+            progress++;
+        }
+        
+        if (progress < 3)
+        {
+            cout << "Enter product count: " << endl;
+            cin >> countBuffer;
+
+            if (!cin)
+            {
+                cout << "Incorrect input!" << endl;
+                continue;
+            }
+            else if (countBuffer < 0)
+            {
+                cout << "Count can not be negative." << endl;
+                continue;
             }
 
             progress++;
@@ -114,7 +113,7 @@ ProductStore::ProductStore(string databasePath)
     }
 }
 
-int ProductStore::GenerateProductCode()
+int ProductStore::GenerateProductCode() const
 {
     srand(time(nullptr));
     int generatedCode = rand() % 900 + 100;
@@ -131,7 +130,7 @@ int ProductStore::GenerateProductCode()
     return generatedCode;
 }
 
-void ProductStore::PrintAllProducts()
+void ProductStore::PrintAllProducts() const
 {
     int i = 0;
     cout << "Products: " << endl;
@@ -176,6 +175,10 @@ void ProductStore::CreateProduct()
     {
         throw exception("Incorrect database path.");
     }
+}
+
+void ProductStore::EditProduct()
+{
 }
 
 void ProductStore::TryRemoveProduct()
