@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
 {
     try
     {
-        ProductStore productStore("DataBase.txt");
+        ProductStore productStore("Resources\\database.bin");
         bool needToExit = false;
         
         while (!needToExit)
