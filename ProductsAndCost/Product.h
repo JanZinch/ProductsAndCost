@@ -1,25 +1,27 @@
 ﻿#pragma once
 #include "Money.h"
 
-class Product
+using namespace MoneyLogic;
+
+namespace ProductsLogic
 {
+    class Product
+    {
 
-private:
+    private:
     
-    char _name[30] = "not_set";
-    Money _cost;
-    int _count = 0;
+        char _name[30] = "not_set";
+        Money _cost;
+        int _count = 0;
     
-public:
+    public:
 
-    Product();
-    Product(const char *, Money, int);
-    Product(const Product&);
-    friend ostream& operator<<(ostream&, const Product&);
+        Product();
+        Product(const char *, Money, int);
+        Product(const Product&);
+        friend ostream& operator<<(ostream&, const Product&);
+        
+    };
+}
 
 
-    
-
-    
-
-};

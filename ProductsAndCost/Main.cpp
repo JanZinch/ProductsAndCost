@@ -2,6 +2,8 @@
 
 #include <conio.h>
 
+using namespace ProductsLogic;
+
 int main(int argc, char* argv[])
 {
     try

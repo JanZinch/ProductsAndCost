@@ -8,33 +8,34 @@
 
 using namespace std;
 
-class ProductStore
+namespace ProductsLogic
 {
-
-private:
-
-    fstream _database;
-    string _databasePath;
-    map<int, Product> _products;
-    
-    class ConsoleUtility
+    class ProductStore
     {
+
+    private:
+
+        fstream _database;
+        string _databasePath;
+        map<int, Product> _products;
+    
+        class ConsoleUtility
+        {
+        public:
+            static void ClearRdbufIfNeed();
+            static Product* ReadProduct();
+        };
+    
+        int GenerateProductCode() const;
+    
     public:
-        static void ClearRdbufIfNeed();
-        static Product* ReadProduct();
+    
+        ProductStore(string);
+        void PrintAllProducts() const;
+        void CreateProduct();
+        void EditProduct();
+        void TryRemoveProduct();
+        
     };
-    
-    int GenerateProductCode() const;
-    
-public:
-    
-    ProductStore(string);
-    void PrintAllProducts() const;
-    void CreateProduct();
-    void EditProduct();
-    void TryRemoveProduct();
+}
 
-
-    
-    
-};

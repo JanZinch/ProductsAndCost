@@ -1,91 +1,84 @@
 ﻿#include "Money.h"
 
-Money::Money() = default;
-
-Money::Money(float count, const char *currency) {
-
-    this->_count = count;
-    strcpy_s(this->_currency, currency);
-}
-
-Money::Money(const Money &object) {
-
-    _count = object._count;
-    strcpy_s(_currency, object._currency);
-}
-
-ostream& operator<<(ostream& out, const Money &object) {
-
-    out << setiosflags(ios::fixed) << setprecision(2) << object._count << " " << object._currency;
-    return out;
-}
-
-istream& operator>>(istream& in, Money &object) {
-
-    in >> object._count >> object._currency;
-    return in;
-}
-
-Money& Money::operator=(const Money &object)
+namespace MoneyLogic
 {
-    _count = object._count;
-    strcpy_s(_currency, object._currency);
+    Money::Money() = default;
 
-    return *this;
-}
+    Money::Money(float count, const char *currency) {
 
-Money Money::operator+(const Money &object) {
-
-    if (strcmp(this->_currency, object._currency) == 0) {
-
-        float sum = this->_count + object._count;
-        Money result(sum, _currency);
-        return result;
-    }
-    else {
-        
-        return Default;
-    }
-}
-
-Money Money::operator-(const Money &object) {
-
-    if (strcmp(this->_currency, object._currency) == 0) {
-
-        float sum = this->_count - object._count;
-        Money Result(sum, _currency);
-        return Result;
-
-    }
-    else {
-        
-        return Default;
+        this->_count = count;
+        strcpy_s(this->_currency, currency);
     }
 
-}
+    Money::Money(const Money &other) {
 
-bool operator==(const Money &object_1, const Money &object_2) {
+        _count = other._count;
+        strcpy_s(_currency, other._currency);
+    }
 
-    if (strcmp(object_1._currency, object_2._currency) == 0) {
+    ostream& operator<<(ostream& out, const Money &moneyObject) {
 
-        if (object_1._count == object_2._count) {
+        out << setiosflags(ios::fixed) << setprecision(2) << moneyObject._count << " " << moneyObject._currency;
+        return out;
+    }
 
-            return true;
+    istream& operator>>(istream& in, Money &moneyObject) {
+
+        in >> moneyObject._count >> moneyObject._currency;
+        return in;
+    }
+
+    Money& Money::operator=(const Money &moneyObject)
+    {
+        _count = moneyObject._count;
+        strcpy_s(_currency, moneyObject._currency);
+
+        return *this;
+    }
+
+    Money Money::operator+(const Money &moneyObject) {
+
+        if (strcmp(this->_currency, moneyObject._currency) == 0) {
+            
+            return Money(this->_count + moneyObject._count, _currency);
         }
-        else {
+        else 
+            return Default;
+        
+    }
 
+    Money Money::operator-(const Money &object) {
+
+        if (strcmp(this->_currency, object._currency) == 0) {
+            
+            return Money(this->_count - object._count, _currency);
+        }
+        else 
+            return Default;
+        
+    }
+
+    bool Money::ApproximatelyEquals(float left, float right)
+    {
+        const float eps = 0.00001f;
+        return abs(left - right) < eps;
+    }
+
+    bool operator==(const Money &moneyLeft, const Money &moneyRight) {
+
+        if (strcmp(moneyLeft._currency, moneyRight._currency) == 0) {
+            
+            return Money::ApproximatelyEquals(moneyLeft._count, moneyRight._count);
+        }
+        else
             return false;
-        }
-    }
-    else {
-
-        return false;
     }
 
-}
-
-template<typename T>
-Money Money::operator*(T &mult){
+    template<typename T>
+    Money Money::operator*(T &mult){
     
-    return Money(_count * (float)mult, this->_currency);
+        return Money(_count * (float)mult, this->_currency);
+    }
+
 }
+
