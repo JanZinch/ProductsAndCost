@@ -2,15 +2,14 @@
 
 #include <conio.h>
 
-
 int main(int argc, char* argv[])
 {
     try
     {
         ProductStore productStore = ProductStore("DataBase.txt");
         bool needToExit = false;
-    
-        while(!needToExit)
+        
+        while (!needToExit)
         {
             cout << "1. View all products\n"
                 "2. Add product\n"
@@ -28,9 +27,11 @@ int main(int argc, char* argv[])
             case '2':
                 productStore.CreateProduct();
                 break;
+
             case '3':
                 productStore.EditProduct();
                 break;
+                
             case '4':
                 productStore.TryRemoveProduct();
                 break;
@@ -38,14 +39,11 @@ int main(int argc, char* argv[])
             case '0':
                 needToExit = true;
                 break;
-        
-                /*default:
-                    break;*/
-        
-            }
-        
-        }
 
+            default:
+                break;
+            }
+        }
         
     }
     catch (exception &ex)

@@ -154,7 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Money.cpp" />
     <ClCompile Include="Product.cpp" />
     <ClCompile Include="ProductStore.cpp" />

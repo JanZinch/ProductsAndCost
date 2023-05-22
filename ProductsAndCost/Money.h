@@ -3,16 +3,12 @@
 
 using namespace std;
 
-#define EMPTY_VALUE (-1.0f)
-
 class Money
 {
 private:
 
-    float count_;
-    char currency_[6];
-    static Money error_;
-
+    float _count = -1.0f;
+    char _currency[6] = "N/D";
 public:
 
     Money();
@@ -26,6 +22,6 @@ public:
     friend bool operator==(const Money&, const Money&);
     template<typename T>
     Money operator*(T&);
-    float get();
-    
 };
+
+static const Money Default(-1.0f, "N/D");
