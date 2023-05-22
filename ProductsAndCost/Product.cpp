@@ -1,7 +1,5 @@
 ﻿#include "Product.h"
 
-#include <iostream>
-
 namespace ProductsLogic
 {
     Product::Product() = default;

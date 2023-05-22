@@ -57,13 +57,7 @@ namespace MoneyLogic
             return Default;
         
     }
-
-    bool Money::ApproximatelyEquals(float left, float right)
-    {
-        const float eps = 0.00001f;
-        return abs(left - right) < eps;
-    }
-
+    
     bool operator==(const Money &moneyLeft, const Money &moneyRight) {
 
         if (strcmp(moneyLeft._currency, moneyRight._currency) == 0) {
@@ -77,7 +71,13 @@ namespace MoneyLogic
     template<typename T>
     Money Money::operator*(T &mult){
     
-        return Money(_count * (float)mult, this->_currency);
+        return Money(_count * static_cast<float>(mult), this->_currency);
+    }
+
+    bool Money::ApproximatelyEquals(float left, float right)
+    {
+        const float eps = 0.00001f;
+        return abs(left - right) < eps;
     }
 
 }

@@ -85,34 +85,7 @@ namespace ProductsLogic
             return new Product(nameBuffer.c_str(), Money(unitCostBuffer, "USD"), countBuffer); 
         }
         else
-        {
             return nullptr;
-        }
-    }
-
-
-    ProductStore::ProductStore(string databasePath)
-    {
-        _databasePath = databasePath;
-        _products = map<int, Product>();
-        
-        _database.open(_databasePath, fstream::in | fstream::binary);
-
-        if(_database.is_open())
-        {
-            pair<int, Product> codeProductPair;
-            
-            while (_database.read((char*)&codeProductPair, sizeof(pair<int, Product>))) {
-
-                _products.emplace(codeProductPair);
-            }
-            
-            _database.close();
-        }
-        else
-        {
-            throw exception("Incorrect database path.");
-        }
     }
 
     int ProductStore::GenerateProductCode() const
@@ -131,7 +104,31 @@ namespace ProductsLogic
         
         return generatedCode;
     }
+    
+    ProductStore::ProductStore(string databasePath)
+    {
+        _databasePath = databasePath;
+        _products = map<int, Product>();
+        
+        _database.open(_databasePath, fstream::in | fstream::binary);
 
+        if(_database.is_open())
+        {
+            pair<int, Product> codeProductPair;
+            
+            while (_database.read(reinterpret_cast<char*>(&codeProductPair), sizeof(pair<int, Product>))) {
+
+                _products.emplace(codeProductPair);
+            }
+            
+            _database.close();
+        }
+        else
+        {
+            throw exception("Incorrect database path.");
+        }
+    }
+    
     void ProductStore::PrintAllProducts() const
     {
         int i = 0;
@@ -142,8 +139,6 @@ namespace ProductsLogic
             cout << i << ". " << "Code: " << codeProductPair.first << " " << codeProductPair.second << endl;
             i++;
         }
-        
-        cout << "End." << endl;
     }
 
     void ProductStore::CreateProduct()
@@ -157,7 +152,7 @@ namespace ProductsLogic
             if (createdProduct != nullptr)
             {
                 pair<int, Product> codeProductPair = pair<int, Product>(GenerateProductCode(), *createdProduct);
-                _database.write((char*)&codeProductPair, sizeof(pair<int, Product>));
+                _database.write(reinterpret_cast<char*>(&codeProductPair), sizeof(pair<int, Product>));
                 _products.emplace(codeProductPair);
                 
                 cout << "Product was successfully created." << endl;
@@ -203,7 +198,7 @@ namespace ProductsLogic
                     {
                         for (pair<int, Product> codeProductPair : _products)
                         {
-                            _database.write((char*)&codeProductPair, sizeof(pair<int, Product>));
+                            _database.write(reinterpret_cast<char*>(&codeProductPair), sizeof(pair<int, Product>));
                         }
                     
                         _database.close();
@@ -252,7 +247,7 @@ namespace ProductsLogic
                 {
                     for (pair<int, Product> codeProductPair : _products)
                     {
-                        _database.write((char*)&codeProductPair, sizeof(pair<int, Product>));
+                        _database.write(reinterpret_cast<char*>(&codeProductPair), sizeof(pair<int, Product>));
                     }
                     
                     _database.close();

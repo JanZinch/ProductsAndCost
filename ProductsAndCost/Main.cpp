@@ -1,5 +1,4 @@
 #include "ProductStore.h"
-
 #include <conio.h>
 
 using namespace ProductsLogic;
@@ -8,7 +7,7 @@ int main(int argc, char* argv[])
 {
     try
     {
-        ProductStore productStore = ProductStore("DataBase.txt");
+        ProductStore productStore("DataBase.txt");
         bool needToExit = false;
         
         while (!needToExit)

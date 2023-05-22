@@ -1,9 +1,7 @@
 ﻿#pragma once
 #include "Product.h"
-#include <iostream>
 #include <fstream>
 #include <string>
-#include <list>
 #include <map>
 
 using namespace std;
@@ -12,7 +10,6 @@ namespace ProductsLogic
 {
     class ProductStore
     {
-
     private:
 
         fstream _database;
