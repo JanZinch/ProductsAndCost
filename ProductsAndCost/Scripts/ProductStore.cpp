@@ -88,12 +88,60 @@ namespace ProductsLogic
             return nullptr;
     }
 
+    char* ProductStore::EncryptionUtility::Encrypt(char* data)
+    {
+        for (int i = 0; i < strlen(data); i++)
+        {
+            data[i] = static_cast<char>(static_cast<int>(data[i]) >> EncryptionKey);
+        }
+
+        return data;
+    }
+
+    char* ProductStore::EncryptionUtility::Decrypt(char* data)
+    {
+        for (int i = 0; i < strlen(data); i++)
+        {
+            data[i] = static_cast<char>(static_cast<int>(data[i]) << EncryptionKey);
+        }
+
+        return data;
+    }
+
+
+    void ProductStore::WriteProduct(pair<int, Product> &codeProductPair)
+    {
+        char* decryptedChars = reinterpret_cast<char*>(&codeProductPair);
+        _database.write(EncryptionUtility::Encrypt(decryptedChars), sizeof(pair<int, Product>));
+    }
+    
+    void ProductStore::WriteProducts(map<int, Product> &products)
+    {
+        for (pair<int, Product> codeProductPair : products)
+        {
+            char* decryptedChars = reinterpret_cast<char*>(&codeProductPair);
+            _database.write(EncryptionUtility::Encrypt(decryptedChars), sizeof(pair<int, Product>));
+        }
+    }
+
+    void ProductStore::ReadProducts(map<int, Product> &products)
+    {
+        char buffer[sizeof(pair<int, Product>)];
+        char* encryptedChars = buffer;
+        
+        while (_database.read(encryptedChars, sizeof(pair<int, Product>))) {
+            
+            pair<int, Product> codeProductPair = *(reinterpret_cast<pair<int, Product>*>(EncryptionUtility::Decrypt(encryptedChars)));
+            products.emplace(codeProductPair);
+        }
+    }
+
     int ProductStore::GenerateProductCode() const
     {
         srand(time(nullptr));
         int generatedCode = rand() % 900 + 100;
 
-        for (pair<int, Product> codeProductPair : _products)
+        for (pair<int, Product> codeProductPair : _productsSet)
         {
             if (codeProductPair.first == generatedCode)
             {
@@ -104,22 +152,26 @@ namespace ProductsLogic
         
         return generatedCode;
     }
+
     
+
     ProductStore::ProductStore(string databasePath)
     {
         _databasePath = databasePath;
-        _products = map<int, Product>();
+        _productsSet = map<int, Product>();
         
         _database.open(_databasePath, fstream::in | fstream::binary);
 
         if(_database.is_open())
         {
-            pair<int, Product> codeProductPair;
+            //pair<int, Product> codeProductPair;
             
-            while (_database.read(reinterpret_cast<char*>(&codeProductPair), sizeof(pair<int, Product>))) {
+            /*while (_database.read(reinterpret_cast<char*>(&codeProductPair), sizeof(pair<int, Product>))) {
 
-                _products.emplace(codeProductPair);
-            }
+                _productsSet.emplace(codeProductPair);
+            }*/
+
+            ReadProducts(_productsSet);
             
             _database.close();
         }
@@ -132,13 +184,15 @@ namespace ProductsLogic
     void ProductStore::PrintAllProducts() const
     {
         int i = 0;
-        cout << "Products: " << endl;
+        cout << "\nProducts: \n";
 
-        for (pair<int, Product> codeProductPair : _products)
+        for (pair<int, Product> codeProductPair : _productsSet)
         {
             cout << i << ". " << "Code: " << codeProductPair.first << " " << codeProductPair.second << endl;
             i++;
         }
+
+        cout << endl;
     }
 
     void ProductStore::CreateProduct()
@@ -152,8 +206,10 @@ namespace ProductsLogic
             if (createdProduct != nullptr)
             {
                 pair<int, Product> codeProductPair = pair<int, Product>(GenerateProductCode(), *createdProduct);
-                _database.write(reinterpret_cast<char*>(&codeProductPair), sizeof(pair<int, Product>));
-                _products.emplace(codeProductPair);
+                //_database.write(reinterpret_cast<char*>(&codeProductPair), sizeof(pair<int, Product>));
+                _productsSet.emplace(codeProductPair);
+                
+                WriteProduct(codeProductPair);
                 
                 cout << "Product was successfully created." << endl;
 
@@ -182,9 +238,9 @@ namespace ProductsLogic
             
         if (cin >> productCode)
         {
-            const auto it = _products.find(productCode);
+            const auto it = _productsSet.find(productCode);
 
-            if (it != _products.end())
+            if (it != _productsSet.end())
             {
                 Product* editableProduct = ConsoleUtility::ReadProduct();
 
@@ -196,10 +252,12 @@ namespace ProductsLogic
                     
                     if (_database.is_open())
                     {
-                        for (pair<int, Product> codeProductPair : _products)
+                        /*for (pair<int, Product> codeProductPair : _productsSet)
                         {
                             _database.write(reinterpret_cast<char*>(&codeProductPair), sizeof(pair<int, Product>));
-                        }
+                        }*/
+
+                        WriteProducts(_productsSet);
                     
                         _database.close();
 
@@ -237,7 +295,7 @@ namespace ProductsLogic
             
         if (cin >> productCode)
         {
-            int removesCount = _products.erase(productCode);
+            int removesCount = _productsSet.erase(productCode);
 
             if (removesCount > 0)
             {
@@ -245,10 +303,12 @@ namespace ProductsLogic
 
                 if (_database.is_open())
                 {
-                    for (pair<int, Product> codeProductPair : _products)
+                    /*for (pair<int, Product> codeProductPair : _productsSet)
                     {
                         _database.write(reinterpret_cast<char*>(&codeProductPair), sizeof(pair<int, Product>));
-                    }
+                    }*/
+
+                    WriteProducts(_productsSet);
                     
                     _database.close();
 

@@ -14,7 +14,7 @@ namespace ProductsLogic
 
         fstream _database;
         string _databasePath;
-        map<int, Product> _products;
+        map<int, Product> _productsSet;
     
         class ConsoleUtility
         {
@@ -22,9 +22,26 @@ namespace ProductsLogic
             static void ClearRdbufIfNeed();
             static Product* ReadProduct();
         };
+
+        class EncryptionUtility
+        {
+        public:
+
+            static const int EncryptionKey = 2023;
+            
+            static char* Encrypt(char*);
+            static char* Decrypt(char*);
+            
+        public:
+            
+        };
     
         int GenerateProductCode() const;
-    
+
+        void WriteProduct(pair<int, Product>&);
+        void WriteProducts(map<int, Product>&);
+        void ReadProducts(map<int, Product>&);
+        
     public:
     
         ProductStore(string);
